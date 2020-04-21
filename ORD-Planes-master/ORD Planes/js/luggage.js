@@ -1,49 +1,145 @@
-/*
-var cupCakesArray = [];
-var cupcakeImage = new Image();
-cupcakeImage.src = "./images/cupcake.png";
-infiniteCupcakes();
+class Luggage {
+    constructor({
+        x = 0,
+        y = 0,
+        height = 50,
+        width = 50,
+        canvas = ctx,
+        images = [
+            './images/luggage-blue.png',
+            './images/luggage-pink.png',
+            './images/luggage-yellow.png',
+            './images/luggage-red.png'
+        ],
+        speed = 1
+    }) {
+        // position data
+        this._x = x;
+        this._y = y;
+        this._height = height;
+        this._width = width;
+        this._speed = speed;
 
-function infiniteCupcakes (){
-    var cupcakeIndex = 0;
-    setInterval(function(){
-        addcupCake();
-        fallingCake(cupCakesArray[cupcakeIndex]);
-        cupcakeIndex++;
-    }, 2000)
-}
+        // parent canvas
+        this._canvas = canvas;
+    
+        // images to use
+        this._images = this.loadImages(images);
 
-// var theCupCake = {y: 0, x: 0 };
+        // loadImage images
+        this.loadImage();
+ 
+        // draw to canvas at intial position
+        this.draw();
 
-function addcupCake() {
-    var rando = Math.floor(Math.random() * 1000);
-    theCupCake = {
-        x: 0, 
-        y: 0, 
-        width:50,
-        height:50 
-    };
-    theCupCake.x = rando;
-    cupCakesArray.push(theCupCake);
-}
+        // start animation lifecycle
+        this.startAnimation();
+    }
 
+    //Getters and Setters
+    get x() { return this._x; }
+    set x(x) { this._x = x; }
+    get y() { return this._y; }
+    set y(y) { this._y = y; }
+    get speed() { return this._speed; }
+    set speed(speed) { this._speed = speed; }
+    get height() { return this._height; }
+    get width() { return this._width; }
+    get canvas() { return this._canvas; }
+    get images() { return this._images; }
+    get image() { return this._image; }
+    set image(src) { this._image = src; }
+    get animationInterval() { return this._animationInterval; }
+    set animationInterval(interval) { this._animationInterval = interval }
 
-function fallingCake (cupcake){
-    var id = setInterval(function(){
-        cupcake.y+=8
-        if(cupcake.y > 1000){
-            clearInterval(id)
+    loadImages(images) {
+        return images.map(src => {
+            const img = new Image();
+            img.height = this.height;
+            img.width = this.width;
+            img.src = src;
+            return img;
+        });
+    }
+    
+    loadImage() {
+        this.image = this.images[Math.floor(Math.random() * this.images.length)];
+    }
+    
+    update() {
+        this.clear();
+        this.y += this.speed;
+        this.draw();
+    }
+
+    draw() {
+        this.canvas.drawImage(
+            this.image,
+            this.x, 
+            this.y,
+            this.width, 
+            this.height
+        );
+    }
+
+    clear() {
+        this.canvas.clearRect(
+            this.x,
+            this.y,
+            this.width,
+            this.height,
+        );
+    }
+
+    /*startAnimation() {
+        this.animationInterval = setInterval(() => {
+            if (this.y == 560) {
+                this.clear();
+                this.stopAnimation();
+            } else {  
+                this.clear();
+                this.update(); 
+            }
+        }, 10);
+    }*/
+    startAnimation() {
+       const request = requestAnimationFrame(() => this.startAnimation(request));
+        if (this.y == 560){
+            this.clear();
+            cancelAnimationFrame(request);
+        } else {
+            this.update();
+            if(this.checkCollisions()) {
+                this.clear();
+                cancelAnimationFrame(request);
+            }
         }
-    },100)
-}
+        
+      }
 
-function drawAllTheCupcakes(){
-    //  console.log("falling");
-   cupCakesArray.forEach(function(oneCupcake){
-        ctx.drawImage(cupcakeImage,oneCupcake.x, oneCupcake.y,oneCupcake.width, oneCupcake.height)
-   }) 
+    checkCollisions() {
+        if (this.checkHitbox(truck)) {
+			document.getElementById("a_audio").pause();
+			document.getElementById("b_audio").play(); 
+			
+            score ++;
+            ShowScore();
+			
+			setTimeout(function(){document.getElementById("b_audio").pause();},2000);
+			setTimeout(function(){document.getElementById("a_audio").play();},1000);
+           return true;
+        }
+    }
+    checkHitbox(otherObject){
+        return (((this.x + this.width) > otherObject.x && (this.x < (otherObject.x + otherObject.width))) && ((this.y + this.height) > otherObject.y && (this.y < (otherObject.y + otherObject.height))));
+    }
+};
 
-}
-*/
+
+
+
+
+
+
 
 
